@@ -121,6 +121,9 @@ class OpenIncludeThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
 
+    def remove_prefix(str, prefix):
+        return str.lstrip(prefix)
+
     def run(self):
         global cache
         debug_info('-- running --')
@@ -155,6 +158,10 @@ class OpenIncludeThread(threading.Thread):
 
                 if not opened:
                     opened = self.try_open_folder(file_to_open)
+
+                if not opened:
+                    file_to_open = remove_prefix(file_to_open, '/')
+                    opened = self.resolve_path(window, view, file_to_open)
 
                 if not opened and get_setting('create_if_not_exists') and view.file_name():
                     if file_to_open.startswith('http'):
